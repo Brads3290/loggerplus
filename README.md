@@ -23,7 +23,7 @@ _**Note:** Whilst the features are automatically applied through `console.log`, 
 
     var loggerplus = require("loggerplus");
 
-**Vanilla JavaScript**
+**Vanilla JavaScript**  
 None - Just use `window.loggerplus`!
 
 ### Logging messages
@@ -58,10 +58,11 @@ Features are **off** by default.
 
 The number fills from right to left, padding with 0's if necessary.
 **E.g.** (in the year 2016)
-  `YY`    `16`
-  `YYY`   `016`
-  `YYYY`  `2016`
-  `YYYYY` `02016`
+
+* `YY` = `16`
+* `YYY` = `016`
+* `YYYY` = `2016`
+* `YYYYY` = `02016`
   
 Note the '0 padding' in the last line.
 
@@ -121,7 +122,7 @@ Note the '0 padding' in the last line.
 * Local - Applies only to logs within the scope of the function to which it is registered.
 * Persistent - Applies to logs within the scope of the function to which it is registered, **as well as** any any child (and child-child, child-child-child, etc.) function calls contained within it.
 
-**The Transformation Function**
+**The Transformation Function**  
 The custom transformation function should take a single String parameter and return the modified String.
 
 Transformations will be applied last, so the string that the function takes will contain the relevant tags (including date/time), allowing you to make changes if need be.

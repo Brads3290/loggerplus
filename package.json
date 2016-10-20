@@ -1,0 +1,33 @@
+{
+  "name": "loggerplus",
+  "version": "1.0.1",
+  "description": "A simple JavaScript library to add optional functionality directly to console.log, avoiding the need to refactor existing code.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Brads3290/loggerplus.git"
+  },
+  "keywords": [
+    "console",
+    "log",
+    "console.log",
+    "logging",
+    "logger",
+    "better",
+    "upgrade",
+    "upgraded",
+    "loggerplus",
+    "plus",
+    "simple",
+    "small"
+  ],
+  "author": "Brad Sullivan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Brads3290/loggerplus/issues"
+  },
+  "homepage": "https://github.com/Brads3290/loggerplus#readme"
+}
