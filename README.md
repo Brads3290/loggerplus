@@ -36,6 +36,12 @@ That's it! One of the awesome things about loggerplus is that you can add it to 
 Simply use the `loggerplus.settings` object to turn features on and off.
 Features are **off** by default.
 
+**Feature types**
+
+* Global - Appears in every logged message.
+* Local - Appears only in logs within the scope of the function to which it is applied.
+* Persistent - Appears in logs within the scope of the function to which it is applied, **as well as** any any child (and child-child, child-child-child, etc.) function calls contained within it.
+
 #### Automatic date/time tagging
 
 **Turn on feature**
@@ -69,12 +75,6 @@ Note the '0 padding' in the last line.
 **Note** - You can put any other character in the format string and it will remain constant, but escape sequences for the above characters have not been implemented yet (look out for future updates).
 
 #### Custom tags
-**Tag types**
-
-* Global - Appears in every logged message.
-* Local - Appears only in logs within the scope of the function to which it is applied.
-* Persistent - Appears in logs within the scope of the function to which it is applied, **as well as** any any child (and child-child, child-child-child, etc.) function calls contained within it.
-
 **Turn on feature**
 
     loggerplus.settings.useTags = true;
@@ -116,12 +116,6 @@ Note the '0 padding' in the last line.
     loggerplus.tags.clearPersistent(function_name);
     
 #### Custom transformations
-**Transformation types**
-
-* Global - Applies to every logged message.
-* Local - Applies only to logs within the scope of the function to which it is registered.
-* Persistent - Applies to logs within the scope of the function to which it is registered, **as well as** any any child (and child-child, child-child-child, etc.) function calls contained within it.
-
 **The Transformation Function**  
 The custom transformation function should take a single String parameter and return the modified String.
 
