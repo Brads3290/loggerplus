@@ -3,7 +3,8 @@ Logger plus
 
 A simple JavaScript library to add optional functionality directly to `console.log`, avoiding the need to refactor existing code.
 
-**Features** - Can be switched on and off
+##Features
+_Can be switched on and off_
 
 * Automatic date/time tagging of log messages, with custom date/time format.
 * Ability to add tags to messages coming from particular functions (including child calls).
