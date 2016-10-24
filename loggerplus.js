@@ -510,46 +510,38 @@
 
     //Get the enhanced replacement function based on a native function
     function replace(native_function) {
-        return function (input) {
-            function processText(text) {
-                if (settings.useDateTime) {
-                    text = stringify_date(new Date(), settings.dateTimeFormat) + text;
-                }
+        return function () {
 
-                if (settings.useTags) {
-                    var matched_tags = get_tags_for(arguments.callee);
-                    var tags_str = "";
-                    for (var i = 0; i < matched_tags.length; i++) {
-                        tags_str += "[" + matched_tags[i] + "] ";
-                    }
-
-                    text = tags_str + text;
-                }
-
-                if (settings.useTransformations) {
-                    var transformations = get_transformers_for(arguments.callee);
-                    for (var j = 0; j < transformations.length; j++) {
-                        text = transformations[j](text);
-                    }
-                }
-
-                //Call the native function to do the console output
-                native_function(text);
+            var prepend = "";
+            if (settings.useDateTime) {
+                prepend = stringify_date(new Date(), settings.dateTimeFormat);
             }
 
-            function processObject(obj) {
-                if (settings.forceStringifyObjects) {
-                    processText(JSON.stringify(obj));
-                } else {
-                    native_function(obj);
+            if (settings.useTags) {
+                var matched_tags = get_tags_for(arguments.callee);
+                var tags_str = "";
+                for (var i = 0; i < matched_tags.length; i++) {
+                    tags_str += "[" + matched_tags[i] + "] ";
+                }
+
+                prepend += tags_str;
+            }
+
+            if (settings.useTransformations) {
+                var transformations = get_transformers_for(arguments.callee);
+                for (var j = 0; j < transformations.length; j++) {
+                    prepend = transformations[j](prepend);
                 }
             }
 
-            if (input instanceof String) {
-                processText(input);
-            } else if (input instanceof Object) {
-                processObject(input);
+            var args = [];
+            args.push(prepend);
+            for (var k = 0; k < arguments.length; k++) {
+                args.push(arguments[k]);
             }
+
+            //Call the native function to do the console output
+            native_function.apply(null, args);
         }
     }
 
