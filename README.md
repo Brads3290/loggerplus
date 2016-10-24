@@ -34,8 +34,8 @@ Loggerplus stores its settings in `loggerplus.settings`.
 * \[String\] (\[YYYY-MM-DD, HH:mm:SS.sss\]) `dateTimeFormat`: _Sets the format of the date/time output (see date/time tagging)._
 * \[Boolean\] (false) `useDateTime`: _Turns on or off date/time tagging._
 * \[Boolean\] (false) `useTags`: _Turns on or off custom tagging._
-* \[Boolean\] (false) `useTransformations`: _Turns on or off custom transformations._
-* \[Boolean\] (false) `forceStringifyObjects`: _Some browsers will interactively display objects in the console. `forceStringifyObjects` will recursively use `JSON.stringify` to display them, to allow for tagging and transformations to be applied. If this is false, tagging and transformations will be ignored for objects._
+* \[Boolean\] (false) `useTextTransformations`: _Turns on or off custom transformations for text components of the log._
+* \[Boolean\] (false) `useObjectTransformations`: _Turns on or off custom transformations for object components of the log._
 
 ### Logging messages
 
@@ -130,7 +130,7 @@ Note the '0 padding' in the last line.
     loggerplus.tags.clearPersistent(function_name);
     
 #### Custom transformations
-**Must be activated with `useTransformations`**  
+**Must be activated with `useObjectTransformations` or `useTextTransformations`**  
 
 **Legend:**
 
@@ -144,45 +144,62 @@ Transformations will be applied last, so the string that the function takes will
 
 *For example*
 
-    //Transform console output into upper case.
-    function transformer(input) {
+    //Transform text console output into upper case.
+    function text_transformer(input) {
         return input.toUpperCase();
     }
-
-**Note:** Whilst transformations will currently be applied in the order that they are created, I can't guarantee this to be the case in future updates. If you need to specify an order, I recommend you register a single transformation function which calls the others in order.
     
+    //Add a property to output objects.
+    function object_transformer(input) {
+        input.consoleOutput = true;
+        
+        return input;
+    }
+
+**Note:** Whilst transformations will currently be applied in the order that they are created, I can't guarantee this to be the case in future updates. If you need to specify an order, I recommend you register a single transformation function which calls the others in order.  
+
+**Also:** You do **NOT** need to deep copy objects when modifying them to avoid breaking things. Loggerplus handles the copying of objects for you.
 ##### Create Global Transformation
 
-    loggerplus.transformation.createGlobal(transformer);
+    loggerplus.transformation.createGlobalText(text_transformer)
+    loggerplus.transformation.createGlobalObject(object_transformer)
 
 ##### Create Local Transformation
 
-    loggerplus.transformation.createLocal(transformer, function_name);
+    loggerplus.transformation.createLocalText(text_transformer, function_name)
+    loggerplus.transformation.createLocalObject(object_transformer, function_name)
     
 ##### Create Persistent Transformation
 
-    loggerplus.transformation.createPersistent("transformer, function_name);
+    loggerplus.transformation.createPersistentText(text_transformer, function_name)
+    loggerplus.transformation.createPersistentObject(object_transformer, function_name)
     
 ##### Remove Global Transformation
 
-    loggerplus.transformation.deleteGlobal(transformer, function_name);
+    loggerplus.transformation.deleteGlobalText(text_transformer, function_name)
+    loggerplus.transformation.deleteGlobalObject(object_transformer, function_name)
 
 ##### Remove Local Transformation
 
-    loggerplus.transformation.deleteLocal(transformer, function_name);
+    loggerplus.transformation.deleteLocalText(text_transformer, function_name)
+    loggerplus.transformation.deleteLocalObject(object_transformer, function_name)
     
 ##### Remove Persistent Transformation
 
-    loggerplus.transformation.deletePersistent(transformer, function_name);
+    loggerplus.transformation.deletePersistentText(text_transformer, function_name)
+    loggerplus.transformation.deletePersistentObject(object_transformer, function_name)
     
 ##### Remove All Global Transformations
 
-    loggerplus.transformation.clearGlobal();
+    loggerplus.transformation.clearGlobalText()
+    loggerplus.transformation.clearGlobalObject()
 
 ##### Remove All Local Transformations (from a function)
 
-    loggerplus.transformation.clearLocal(function_name);
+    loggerplus.transformation.clearLocalText(function_name)
+    loggerplus.transformation.clearLocalObject(function_name)
     
 ##### Remove All Persistent Transformations (from a function)
 
-    loggerplus.transformation.clearPersistent(function_name);
+    loggerplus.transformation.clearPersistentText(function_name)
+    loggerplus.transformation.clearPersistentObject(function_name)

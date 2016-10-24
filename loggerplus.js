@@ -291,7 +291,7 @@
             var uid = fn.getUID();
 
             if (text_transformers.local[uid].indexOf(transformer)) {
-                text_transformers.local[uid].splice(text_transformers.local[uid].indexOf(tag), 1);
+                text_transformers.local[uid].splice(text_transformers.local[uid].indexOf(transformer), 1);
             } else {
                 throw {e: "[loggerplus] Unable to delete local transformation from function \"" + fn.name + "\" because it does not exist."}
             }
@@ -300,7 +300,7 @@
             var uid = fn.getUID();
 
             if (object_transformers.local[uid].indexOf(transformer)) {
-                object_transformers.local[uid].splice(object_transformers.local[uid].indexOf(tag), 1);
+                object_transformers.local[uid].splice(object_transformers.local[uid].indexOf(transformer), 1);
             } else {
                 throw {e: "[loggerplus] Unable to delete local transformation from function \"" + fn.name + "\" because it does not exist."}
             }
@@ -336,7 +336,7 @@
             var uid = fn.getUID();
 
             if (text_transformers.persistent[uid].indexOf(transformer)) {
-                text_transformers.persistent[uid].splice(text_transformers.persistent[uid].indexOf(tag), 1);
+                text_transformers.persistent[uid].splice(text_transformers.persistent[uid].indexOf(transformer), 1);
             } else {
                 throw {e: "[loggerplus] Unable to delete persistent transformer from function \"" + fn.name + "\" because it does not exist."}
             }
@@ -345,7 +345,7 @@
             var uid = fn.getUID();
 
             if (object_transformers.persistent[uid].indexOf(transformer)) {
-                object_transformers.persistent[uid].splice(object_transformers.persistent[uid].indexOf(tag), 1);
+                object_transformers.persistent[uid].splice(object_transformers.persistent[uid].indexOf(transformer), 1);
             } else {
                 throw {e: "[loggerplus] Unable to delete persistent transformer from function \"" + fn.name + "\" because it does not exist."}
             }
@@ -456,7 +456,7 @@
 
 
         //
-        //Lastly check the local tags list
+        //Lastly check the local s list
         //
 
         if (text_transformers.local[uids[1]]) { //Start from the 2nd UID entry. The first [0] is 'console.log'.
@@ -644,10 +644,6 @@
                 }
 
                 prepend += tags_str;
-            }
-
-            if (settings.useObjectTransformations) {
-
             }
 
             var args = [];
