@@ -20,11 +20,11 @@ _Can be switched on and off_
 _**Note:** Whilst the features are automatically applied through `console.log`, you'll still need to use some other functions and variables to activate and configure said features._
 
 ### Setup
-**Node.js**
+#### Node.js
 
     var loggerplus = require("loggerplus");
 
-**Vanilla JavaScript**  
+#### Vanilla JavaScript  
 None - Just use `window.loggerplus`!
 
 ### Logging messages
@@ -37,7 +37,7 @@ That's it! One of the awesome things about loggerplus is that you can add it to 
 Simply use the `loggerplus.settings` object to turn features on and off.
 Features are **off** by default.
 
-**Feature types**
+##### Feature types
 
 * Global - Appears in every logged message.
 * Local - Appears only in logs within the scope of the function to which it is applied.
@@ -45,15 +45,15 @@ Features are **off** by default.
 
 #### Automatic date/time tagging
 
-**Turn on feature**
+##### Turn on feature
 
     loggerplus.settings.useDateTime = true;
 
-**Set date/time format**
+##### Set date/time format
 
     loggerplus.settings.dateTimeFormat = "[YYYY-MM-DD, HH:mm:SS.sss]"; //The default date/time format
 
-**Date/time format legend**
+##### Date/time format legend
 
 * `Y` - Year
 * `M` - Month
@@ -76,48 +76,53 @@ Note the '0 padding' in the last line.
 **Note** - You can put any other character in the format string and it will remain constant, but escape sequences for the above characters have not been implemented yet (look out for future updates).
 
 #### Custom tags
-**Turn on feature**
+##### Turn on feature
 
     loggerplus.settings.useTags = true;
     
-**Create Global Tag**
+##### Create Global Tag
 
     loggerplus.tags.createGlobal("Tag");
 
-**Create Local Tag**
+##### Create Local Tag
 
     loggerplus.tags.createLocal("Tag", function_name);
     
-**Create Persistent Tag**
+##### Create Persistent Tag
 
     loggerplus.tags.createPersistent("Tag", function_name);
     
-**Remove Global Tag**
+##### Remove Global Tag
 
     loggerplus.tags.deleteGlobal("Tag", function_name);
 
-**Remove Local Tag**
+##### Remove Local Tag
 
     loggerplus.tags.deleteLocal("Tag", function_name);
     
-**Remove Persistent Tag**
+##### Remove Persistent Tag
 
     loggerplus.tags.deletePersistent("Tag", function_name);
     
-**Remove All Global Tags**
+##### Remove All Global Tags
 
     loggerplus.tags.clearGlobal();
 
-**Remove All Local Tags** (from a function)
+##### Remove All Local Tags (from a function)
 
     loggerplus.tags.clearLocal(function_name);
     
-**Remove All Persistent Tags** (from a function)
+##### Remove All Persistent Tags (from a function)
 
     loggerplus.tags.clearPersistent(function_name);
     
 #### Custom transformations
-**The Transformation Function**  
+**Legend:**
+
+* _transformer:_ The transformation function.
+* _function_name:_ The function relative to which the transformation will be applied.
+
+##### The Transformation Function  
 The custom transformation function should take a single String parameter and return the modified String.
 
 Transformations will be applied last, so the string that the function takes will contain the relevant tags (including date/time), allowing you to make changes if need be.
@@ -131,42 +136,42 @@ Transformations will be applied last, so the string that the function takes will
 
 **Note:** Whilst transformations will currently be applied in the order that they are created, I can't guarantee this to be the case in future updates. If you need to specify an order, I recommend you register a single transformation function which calls the others in order.
 
-**Turn on feature**
+##### Turn on feature
 
     loggerplus.settings.useTransformations = true;
     
-**Create Global Transformation**
+##### Create Global Transformation
 
-    loggerplus.transformation.createGlobal("Transformation");
+    loggerplus.transformation.createGlobal(transformer);
 
-**Create Local Transformation**
+##### Create Local Transformation
 
-    loggerplus.transformation.createLocal("Transformation", function_name);
+    loggerplus.transformation.createLocal(transformer, function_name);
     
-**Create Persistent Transformation**
+##### Create Persistent Transformation
 
-    loggerplus.transformation.createPersistent("Transformation", function_name);
+    loggerplus.transformation.createPersistent("transformer, function_name);
     
-**Remove Global Transformation**
+##### Remove Global Transformation
 
-    loggerplus.transformation.deleteGlobal("Transformation", function_name);
+    loggerplus.transformation.deleteGlobal(transformer, function_name);
 
-**Remove Local Transformation**
+##### Remove Local Transformation
 
-    loggerplus.transformation.deleteLocal("Transformation", function_name);
+    loggerplus.transformation.deleteLocal(transformer, function_name);
     
-**Remove Persistent Transformation**
+##### Remove Persistent Transformation
 
-    loggerplus.transformation.deletePersistent("Transformation", function_name);
+    loggerplus.transformation.deletePersistent(transformer, function_name);
     
-**Remove All Global Transformations**
+##### Remove All Global Transformations
 
     loggerplus.transformation.clearGlobal();
 
-**Remove All Local Transformations** (from a function)
+##### Remove All Local Transformations (from a function)
 
     loggerplus.transformation.clearLocal(function_name);
     
-**Remove All Persistent Transformations** (from a function)
+##### Remove All Persistent Transformations (from a function)
 
     loggerplus.transformation.clearPersistent(function_name);
