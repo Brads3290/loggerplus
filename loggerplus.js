@@ -20,7 +20,8 @@
         dateTimeFormat: "[YYYY-MM-DD, HH:mm:SS.sss]",
         useDateTime: false,
         useTags: false,
-        useTransformations: false,
+        useTextTransformations: false,
+        useObjectTransformations: false,
         forceStringifyObjects: false
     };
 
@@ -213,9 +214,16 @@
      * NOTE that the earliest added transformations will be applied first (queue structure), however this is not guaranteed to
      * be the case in future updates.
      */
-    var global_transformers = [];
-    var local_transformers = {};
-    var persistent_transformers = {};
+    var text_transformers = {
+        global: [],
+        local: {},
+        persistent: {}
+    };
+    var object_transformers = {
+        global: [],
+        local: {},
+        persistent: {}
+    };
     (function () {
         /** Transformation functionality
          * Allows the user to add their own custom functions which transform the console output.
@@ -223,18 +231,23 @@
 
         exporter.transformation = {};
 
-
         /** transformation.createLocal
          * Registers a transformer to apply to any logged message within 'fn'
          *
          * @param fn - The function in whose scope to apply the transformer.
          * @param transformer - The transformer to apply.
          */
-        exporter.transformation.createLocal = function (transformer, fn) {
+        exporter.transformation.createLocalText = function (transformer, fn) {
             var uid = fn.getUID();
 
-            local_transformers[uid] = local_transformers[uid] || [];
-            local_transformers[uid].push(transformer);
+            text_transformers.local[uid] = text_transformers.local[uid] || [];
+            text_transformers.local[uid].push(transformer);
+        };
+        exporter.transformation.createLocalObject = function (transformer, fn) {
+            var uid = fn.getUID();
+
+            object_transformers.local[uid] = object_transformers.local[uid] || [];
+            object_transformers.local[uid].push(transformer);
         };
 
         /** transformation.createGlobal
@@ -242,8 +255,11 @@
          *
          * @param transformer - The transformation to apply.
          */
-        exporter.transformation.createGlobal = function (transformer) {
-            global_transformers.push(transformer);
+        exporter.transformation.createGlobalText = function (transformer) {
+            text_transformers.global.push(transformer);
+        };
+        exporter.transformation.createGlobalObject = function (transformer) {
+            object_transformers.global.push(transformer);
         };
 
         /** transformation.createPersistent
@@ -252,11 +268,17 @@
          * @param fn - The function in whose scope to apply the tag.
          * @param transformer - The transformation to apply.
          */
-        exporter.transformation.createPersistent = function (transformer, fn) {
+        exporter.transformation.createPersistentText = function (transformer, fn) {
             var uid = fn.getUID();
 
-            persistent_transformers[uid] = persistent_transformers[uid] || [];
-            persistent_transformers[uid].push(transformer);
+            text_transformers.persistent[uid] = text_transformers.persistent[uid] || [];
+            text_transformers.persistent[uid].push(transformer);
+        };
+        exporter.transformation.createPersistentObject = function (transformer, fn) {
+            var uid = fn.getUID();
+
+            object_transformers.persistent[uid] = object_transformers.persistent[uid] || [];
+            object_transformers.persistent[uid].push(transformer);
         };
 
         /** transformation.deleteLocal
@@ -265,11 +287,20 @@
          * @param transformer
          * @param fn
          */
-        exporter.transformation.deleteLocal = function (transformer, fn) {
+        exporter.transformation.deleteLocalText = function (transformer, fn) {
             var uid = fn.getUID();
 
-            if (local_transformers[uid].indexOf(transformer)) {
-                local_transformers[uid].splice(local_transformers[uid].indexOf(tag), 1);
+            if (text_transformers.local[uid].indexOf(transformer)) {
+                text_transformers.local[uid].splice(text_transformers.local[uid].indexOf(tag), 1);
+            } else {
+                throw {e: "[loggerplus] Unable to delete local transformation from function \"" + fn.name + "\" because it does not exist."}
+            }
+        };
+        exporter.transformation.deleteLocalObject = function (transformer, fn) {
+            var uid = fn.getUID();
+
+            if (object_transformers.local[uid].indexOf(transformer)) {
+                object_transformers.local[uid].splice(object_transformers.local[uid].indexOf(tag), 1);
             } else {
                 throw {e: "[loggerplus] Unable to delete local transformation from function \"" + fn.name + "\" because it does not exist."}
             }
@@ -280,9 +311,16 @@
          *
          * @param transformer
          */
-        exporter.transformation.deleteGlobal = function (transformer) {
-            if (global_transformers.indexOf(transformer)) {
-                global_transformers.splice(global_transformers.indexOf(transformer), 1);
+        exporter.transformation.deleteGlobalText = function (transformer) {
+            if (text_transformers.global.indexOf(transformer)) {
+                text_transformers.global.splice(text_transformers.global.indexOf(transformer), 1);
+            } else {
+                throw {e: "[loggerplus] Unable to delete global transformation because it does not exist."}
+            }
+        };
+        exporter.transformation.deleteGlobalObject = function (transformer) {
+            if (object_transformers.global.indexOf(transformer)) {
+                object_transformers.global.splice(object_transformers.global.indexOf(transformer), 1);
             } else {
                 throw {e: "[loggerplus] Unable to delete global transformation because it does not exist."}
             }
@@ -294,11 +332,20 @@
          * @param transformer
          * @param fn
          */
-        exporter.transformation.deletePersistent = function (transformer, fn) {
+        exporter.transformation.deletePersistentText = function (transformer, fn) {
             var uid = fn.getUID();
 
-            if (persistent_transformers[uid].indexOf(transformer)) {
-                persistent_transformers[uid].splice(persistent_transformers[uid].indexOf(tag), 1);
+            if (text_transformers.persistent[uid].indexOf(transformer)) {
+                text_transformers.persistent[uid].splice(text_transformers.persistent[uid].indexOf(tag), 1);
+            } else {
+                throw {e: "[loggerplus] Unable to delete persistent transformer from function \"" + fn.name + "\" because it does not exist."}
+            }
+        };
+        exporter.transformation.deletePersistentObject = function (transformer, fn) {
+            var uid = fn.getUID();
+
+            if (object_transformers.persistent[uid].indexOf(transformer)) {
+                object_transformers.persistent[uid].splice(object_transformers.persistent[uid].indexOf(tag), 1);
             } else {
                 throw {e: "[loggerplus] Unable to delete persistent transformer from function \"" + fn.name + "\" because it does not exist."}
             }
@@ -309,11 +356,20 @@
          *
          * @param fn
          */
-        exporter.transformation.clearLocal = function (fn) {
+        exporter.transformation.clearLocalText = function (fn) {
             var uid = fn.getUID();
 
-            if (local_transformers[uid]) {
-                delete local_transformers[uid];
+            if (text_transformers.local[uid]) {
+                delete text_transformers.local[uid];
+            } else {
+                throw {e: "[loggerplus] Unable to clear local transformations from function \"" + fn.name + "\" because there are none."}
+            }
+        };
+        exporter.transformation.clearLocalObject = function (fn) {
+            var uid = fn.getUID();
+
+            if (object_transformers.local[uid]) {
+                delete object_transformers.local[uid];
             } else {
                 throw {e: "[loggerplus] Unable to clear local transformations from function \"" + fn.name + "\" because there are none."}
             }
@@ -322,8 +378,11 @@
         /** transformations.clearGlobal
          * Removes all global transformations.
          */
-        exporter.transformation.clearGlobal = function () {
-            global_transformers = [];
+        exporter.transformation.clearGlobalText = function () {
+            text_transformers.global = [];
+        };
+        exporter.transformation.clearGlobalObject = function () {
+            object_transformers.global = [];
         };
 
         /** transformations.clearPersistent
@@ -331,11 +390,20 @@
          *
          * @param fn
          */
-        exporter.transformation.clearPersistent = function (fn) {
+        exporter.transformation.clearPersistentText = function (fn) {
             var uid = fn.getUID();
 
-            if (persistent_transformers[uid]) {
-                delete persistent_transformers[uid];
+            if (text_transformers.persistent[uid]) {
+                delete text_transformers.persistent[uid];
+            } else {
+                throw {e: "[loggerplus] Unable to clear persistent transformations from function \"" + fn.name + "\" because there are none."}
+            }
+        };
+        exporter.transformation.clearPersistentObject = function (fn) {
+            var uid = fn.getUID();
+
+            if (object_transformers.persistent[uid]) {
+                delete object_transformers.persistent[uid];
             } else {
                 throw {e: "[loggerplus] Unable to clear persistent transformations from function \"" + fn.name + "\" because there are none."}
             }
@@ -343,11 +411,11 @@
     }());
 
     /** get_transformers_for
-     * A utility function to get transformers registered for a given function
+     * Utility functions to get transformers registered for a given function
      * @param fn
      * @returns {Array}
      */
-    function get_transformers_for (fn) {
+    function get_text_transformers_for (fn) {
         var matched_transformers = [];
 
 
@@ -355,8 +423,8 @@
         //Start by matching any global transformers
         //
 
-        for (var i = 0; i < global_transformers.length; i++) {
-            matched_transformers.push(global_transformers[i]);
+        for (var i = 0; i < text_transformers.global.length; i++) {
+            matched_transformers.push(text_transformers.global[i]);
         }
 
 
@@ -379,9 +447,9 @@
         //Iterate through the found UIDs backwards and apply any persistent transformers assigned to them
         //Backwards to register the transformers from the "oldest" function first
         for (var j = uids.length - 1; j >= 0; j--) {
-            if (persistent_transformers[uids[j]]) {
-                for (var jj = 0; jj < persistent_transformers[uids[j]].length; jj++) {
-                    matched_transformers.push(persistent_transformers[uids[j]][jj]);
+            if (text_transformers.persistent[uids[j]]) {
+                for (var jj = 0; jj < text_transformers.persistent[uids[j]].length; jj++) {
+                    matched_transformers.push(text_transformers.persistent[uids[j]][jj]);
                 }
             }
         }
@@ -391,9 +459,61 @@
         //Lastly check the local tags list
         //
 
-        if (local_transformers[uids[1]]) { //Start from the 2nd UID entry. The first [0] is 'console.log'.
-            for (var k = 0; k < local_transformers[uids[1]].length; k++) {
-                matched_transformers.push(local_transformers[uids[1]][k]);
+        if (text_transformers.local[uids[1]]) { //Start from the 2nd UID entry. The first [0] is 'console.log'.
+            for (var k = 0; k < text_transformers.local[uids[1]].length; k++) {
+                matched_transformers.push(text_transformers.local[uids[1]][k]);
+            }
+        }
+
+        return matched_transformers;
+    }
+    function get_object_transformers_for (fn) {
+        var matched_transformers = [];
+
+
+        //
+        //Start by matching any global transformers
+        //
+
+        for (var i = 0; i < object_transformers.global.length; i++) {
+            matched_transformers.push(object_transformers.global[i]);
+        }
+
+
+        //
+        //Next match any persistent transformers from higher level function calls
+        //
+
+        //Make a list of higher-level function UIDs
+        var uids = [];
+        var caller = fn; //Start with the current function
+        while (caller) {
+
+            //Record the UID
+            uids.push(caller.getUID());
+
+            //Set the caller to the caller's caller
+            caller = caller.caller;
+        }
+
+        //Iterate through the found UIDs backwards and apply any persistent transformers assigned to them
+        //Backwards to register the transformers from the "oldest" function first
+        for (var j = uids.length - 1; j >= 0; j--) {
+            if (object_transformers.persistent[uids[j]]) {
+                for (var jj = 0; jj < object_transformers.persistent[uids[j]].length; jj++) {
+                    matched_transformers.push(object_transformers.persistent[uids[j]][jj]);
+                }
+            }
+        }
+
+
+        //
+        //Lastly check the local tags list
+        //
+
+        if (object_transformers.local[uids[1]]) { //Start from the 2nd UID entry. The first [0] is 'console.log'.
+            for (var k = 0; k < object_transformers.local[uids[1]].length; k++) {
+                matched_transformers.push(object_transformers.local[uids[1]][k]);
             }
         }
 
@@ -511,7 +631,6 @@
     //Get the enhanced replacement function based on a native function
     function replace(native_function) {
         return function () {
-
             var prepend = "";
             if (settings.useDateTime) {
                 prepend = stringify_date(new Date(), settings.dateTimeFormat);
@@ -527,16 +646,25 @@
                 prepend += tags_str;
             }
 
-            if (settings.useTransformations) {
-                var transformations = get_transformers_for(arguments.callee);
-                for (var j = 0; j < transformations.length; j++) {
-                    prepend = transformations[j](prepend);
-                }
+            if (settings.useObjectTransformations) {
+
             }
 
             var args = [];
             args.push(prepend);
             for (var k = 0; k < arguments.length; k++) {
+                if (settings.useTextTransformations && arguments[k] instanceof String) {
+                    var text_transformers = get_text_transformers_for(arguments.callee);
+                    for (var ki = 0; ki < text_transformers.length; ki++) {
+                        arguments[k] = text_transformers[ki](arguments[k]);
+                    }
+                } else if (settings.useObjectTransformations && arguments[k] instanceof Object) {
+                    var obj_transformers = get_object_transformers_for(arguments.callee);
+                    for (var kj = 0; kj < obj_transformers.length; kj++) {
+                        arguments[k] = obj_transformers[kj](JSON.parse(JSON.stringify(arguments[k])));
+                    }
+                }
+
                 args.push(arguments[k]);
             }
 
