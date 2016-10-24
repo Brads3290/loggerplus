@@ -80,7 +80,7 @@
         exporter.tags.deleteLocal = function (tag, fn) {
             var uid = fn.getUID();
 
-            if (local_tags[uid].indexOf(tag)) {
+            if (local_tags[uid].indexOf(tag) > -1) {
                 local_tags[uid].splice(local_tags[uid].indexOf(tag), 1);
             } else {
                 throw {e: "[loggerplus] Unable to delete local tag \"" + tag + "\" from function \"" + fn.name + "\" because it does not exist"}
@@ -93,7 +93,7 @@
          * @param tag
          */
         exporter.tags.deleteGlobal = function (tag) {
-            if (global_tags.indexOf(tag)) {
+            if (global_tags.indexOf(tag) > -1) {
                 global_tags.splice(global_tags.indexOf(tag), 1);
             } else {
                 throw {e: "[loggerplus] Unable to delete global tag \"" + tag + "\" because it does not exist"}
@@ -109,7 +109,7 @@
         exporter.tags.deletePersistent = function (tag, fn) {
             var uid = fn.getUID();
 
-            if (persistent_tags[uid].indexOf(tag)) {
+            if (persistent_tags[uid].indexOf(tag) > -1) {
                 persistent_tags[uid].splice(persistent_tags[uid].indexOf(tag), 1);
             } else {
                 throw {e: "[loggerplus] Unable to delete persistent tag \"" + tag + "\" from function \"" + fn.name + "\" because it does not exist"}
@@ -290,7 +290,7 @@
         exporter.transformation.deleteLocalText = function (transformer, fn) {
             var uid = fn.getUID();
 
-            if (text_transformers.local[uid].indexOf(transformer)) {
+            if (text_transformers.local[uid].indexOf(transformer) > -1) {
                 text_transformers.local[uid].splice(text_transformers.local[uid].indexOf(transformer), 1);
             } else {
                 throw {e: "[loggerplus] Unable to delete local transformation from function \"" + fn.name + "\" because it does not exist."}
@@ -299,7 +299,7 @@
         exporter.transformation.deleteLocalObject = function (transformer, fn) {
             var uid = fn.getUID();
 
-            if (object_transformers.local[uid].indexOf(transformer)) {
+            if (object_transformers.local[uid].indexOf(transformer) > -1) {
                 object_transformers.local[uid].splice(object_transformers.local[uid].indexOf(transformer), 1);
             } else {
                 throw {e: "[loggerplus] Unable to delete local transformation from function \"" + fn.name + "\" because it does not exist."}
@@ -312,14 +312,14 @@
          * @param transformer
          */
         exporter.transformation.deleteGlobalText = function (transformer) {
-            if (text_transformers.global.indexOf(transformer)) {
+            if (text_transformers.global.indexOf(transformer) > -1) {
                 text_transformers.global.splice(text_transformers.global.indexOf(transformer), 1);
             } else {
                 throw {e: "[loggerplus] Unable to delete global transformation because it does not exist."}
             }
         };
         exporter.transformation.deleteGlobalObject = function (transformer) {
-            if (object_transformers.global.indexOf(transformer)) {
+            if (object_transformers.global.indexOf(transformer) > -1) {
                 object_transformers.global.splice(object_transformers.global.indexOf(transformer), 1);
             } else {
                 throw {e: "[loggerplus] Unable to delete global transformation because it does not exist."}
@@ -335,7 +335,7 @@
         exporter.transformation.deletePersistentText = function (transformer, fn) {
             var uid = fn.getUID();
 
-            if (text_transformers.persistent[uid].indexOf(transformer)) {
+            if (text_transformers.persistent[uid].indexOf(transformer) > -1) {
                 text_transformers.persistent[uid].splice(text_transformers.persistent[uid].indexOf(transformer), 1);
             } else {
                 throw {e: "[loggerplus] Unable to delete persistent transformer from function \"" + fn.name + "\" because it does not exist."}
@@ -344,7 +344,7 @@
         exporter.transformation.deletePersistentObject = function (transformer, fn) {
             var uid = fn.getUID();
 
-            if (object_transformers.persistent[uid].indexOf(transformer)) {
+            if (object_transformers.persistent[uid].indexOf(transformer) > -1) {
                 object_transformers.persistent[uid].splice(object_transformers.persistent[uid].indexOf(transformer), 1);
             } else {
                 throw {e: "[loggerplus] Unable to delete persistent transformer from function \"" + fn.name + "\" because it does not exist."}
@@ -652,12 +652,12 @@
             }
 
             for (var k = 0; k < arguments.length; k++) {
-                if (settings.useTextTransformations && arguments[k] instanceof String) {
+                if (settings.useTextTransformations && typeof(arguments[k]) === "string") {
                     var text_transformers = get_text_transformers_for(arguments.callee);
                     for (var ki = 0; ki < text_transformers.length; ki++) {
                         arguments[k] = text_transformers[ki](arguments[k]);
                     }
-                } else if (settings.useObjectTransformations && arguments[k] instanceof Object) {
+                } else if (settings.useObjectTransformations && typeof(arguments[k]) === "object") {
                     var obj_transformers = get_object_transformers_for(arguments.callee);
                     for (var kj = 0; kj < obj_transformers.length; kj++) {
                         arguments[k] = obj_transformers[kj](JSON.parse(JSON.stringify(arguments[k])));

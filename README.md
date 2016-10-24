@@ -28,13 +28,13 @@ None - Just use `window.loggerplus`!
 
 ### Settings
 Loggerplus stores its settings in `loggerplus.settings`.  
-\[Type\] (default value) `key`: _Description_
+**\[Type\]** (default value) `key`: _Description_
 
-* \[String\] (\[YYYY-MM-DD, HH:mm:SS.sss\]) `dateTimeFormat`: _Sets the format of the date/time output (see date/time tagging)._
-* \[Boolean\] (false) `useDateTime`: _Turns on or off date/time tagging._
-* \[Boolean\] (false) `useTags`: _Turns on or off custom tagging._
-* \[Boolean\] (false) `useTextTransformations`: _Turns on or off custom transformations for text components of the log._
-* \[Boolean\] (false) `useObjectTransformations`: _Turns on or off custom transformations for object components of the log._
+* **\[String\]** (\[YYYY-MM-DD, HH:mm:SS.sss\]) `dateTimeFormat`: _Sets the format of the date/time output (see date/time tagging)._
+* **\[Boolean\]** (false) `useDateTime`: _Turns on or off date/time tagging._
+* **\[Boolean\]** (false) `useTags`: _Turns on or off custom tagging._
+* **\[Boolean\]** (false) `useTextTransformations`: _Turns on or off custom transformations for text components of the log._
+* **\[Boolean\]** (false) `useObjectTransformations`: _Turns on or off custom transformations for object components of the log._
 
 ### Logging messages
 
@@ -106,7 +106,7 @@ Note the '0 padding' in the last line.
     
 ##### Remove Global Tag
 
-    loggerplus.tags.deleteGlobal("Tag", function_name);
+    loggerplus.tags.deleteGlobal("Tag");
 
 ##### Remove Local Tag
 
