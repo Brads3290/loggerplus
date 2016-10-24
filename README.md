@@ -27,14 +27,32 @@ _**Note:** Whilst the features are automatically applied through `console.log`, 
 #### Vanilla JavaScript  
 None - Just use `window.loggerplus`!
 
+### Settings
+Loggerplus stores its settings in `loggerplus.settings`.  
+\[Type\] (default value) `key`: _Description_
+
+* \[String\] (\[YYYY-MM-DD, HH:mm:SS.sss\]) `dateTimeFormat`: _Sets the format of the date/time output (see date/time tagging)._
+* \[Boolean\] (false) `useDateTime`: _Turns on or off date/time tagging._
+* \[Boolean\] (false) `useTags`: _Turns on or off custom tagging._
+* \[Boolean\] (false) `useTransformations`: _Turns on or off custom transformations._
+* \[Boolean\] (false) `forceStringifyObjects`: _Some browsers will interactively display objects in the console. `forceStringifyObjects` will recursively use `JSON.stringify` to display them, to allow for tagging and transformations to be applied. If this is false, tagging and transformations will be ignored for objects._
+
 ### Logging messages
 
     console.log("Hello World!");
 
 That's it! One of the awesome things about loggerplus is that you can add it to existing code and simply configure it; no refactoring required.
 
+**What if I want to use the native `console.log` somewhere in my code?**  
+Easy! Simply use `console.native_log(message);`
+
+**Note:** Loggerplus also works with the following `console.log` variants (as well as defining their `console.native_` equivalents)
+
+* `console.warn`
+* `console.error`
+
 ### Configuring features
-Simply use the `loggerplus.settings` object to turn features on and off.
+Simply use the `loggerplus.settings` object to turn features on and off.  
 Features are **off** by default.
 
 ##### Feature types
@@ -44,10 +62,7 @@ Features are **off** by default.
 * Persistent - Appears in logs within the scope of the function to which it is applied, **as well as** any any child (and child-child, child-child-child, etc.) function calls contained within it.
 
 #### Automatic date/time tagging
-
-##### Turn on feature
-
-    loggerplus.settings.useDateTime = true;
+**Must be activated with `useDateTime`**
 
 ##### Set date/time format
 
@@ -76,9 +91,7 @@ Note the '0 padding' in the last line.
 **Note** - You can put any other character in the format string and it will remain constant, but escape sequences for the above characters have not been implemented yet (look out for future updates).
 
 #### Custom tags
-##### Turn on feature
-
-    loggerplus.settings.useTags = true;
+**Must be activated with `useTags`**
     
 ##### Create Global Tag
 
@@ -117,6 +130,8 @@ Note the '0 padding' in the last line.
     loggerplus.tags.clearPersistent(function_name);
     
 #### Custom transformations
+**Must be activated with `useTransformations`**  
+
 **Legend:**
 
 * _transformer:_ The transformation function.
@@ -135,10 +150,6 @@ Transformations will be applied last, so the string that the function takes will
     }
 
 **Note:** Whilst transformations will currently be applied in the order that they are created, I can't guarantee this to be the case in future updates. If you need to specify an order, I recommend you register a single transformation function which calls the others in order.
-
-##### Turn on feature
-
-    loggerplus.settings.useTransformations = true;
     
 ##### Create Global Transformation
 

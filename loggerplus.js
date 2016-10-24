@@ -1,5 +1,4 @@
 (function (exporter) {
-
     /** Function.getUID
      * Allow each function to hold its own UID.
      * Used for global_tags.
@@ -21,7 +20,8 @@
         dateTimeFormat: "[YYYY-MM-DD, HH:mm:SS.sss]",
         useDateTime: false,
         useTags: false,
-        useTransformations: false
+        useTransformations: false,
+        forceStringifyObjects: false
     };
 
 
@@ -498,38 +498,69 @@
         return arr_format.join("");
     }
 
-    //Clone console.log so that we can redefine it
+    //Clone console.log and related so that we can redefine it
     var nativeLog = clone_fn(console.log);
+    var nativeWarn = clone_fn(console.warn || console.log);
+    var nativeError = clone_fn(console.error || console.log);
 
     //Allow the user to access the vanilla console.log if they choose.
     console.native_log = nativeLog;
+    console.native_warn = nativeWarn;
+    console.native_error = nativeError;
 
-    //Redefine console.log to add some new functionality
-    console.log = function (text) {
-        if (settings.useDateTime) {
-            text = stringify_date(new Date(), settings.dateTimeFormat) + text;
-        }
+    //Get the enhanced replacement function based on a native function
+    function replace(native_function) {
+        return function (input) {
+            function processText(text) {
+                if (settings.useDateTime) {
+                    text = stringify_date(new Date(), settings.dateTimeFormat) + text;
+                }
 
-        if (settings.useTags) {
-            var matched_tags = get_tags_for(arguments.callee);
-            var tags_str = "";
-            for (var i = 0; i < matched_tags.length; i++) {
-                tags_str += "[" + matched_tags[i] + "] ";
+                if (settings.useTags) {
+                    var matched_tags = get_tags_for(arguments.callee);
+                    var tags_str = "";
+                    for (var i = 0; i < matched_tags.length; i++) {
+                        tags_str += "[" + matched_tags[i] + "] ";
+                    }
+
+                    text = tags_str + text;
+                }
+
+                if (settings.useTransformations) {
+                    var transformations = get_transformers_for(arguments.callee);
+                    for (var j = 0; j < transformations.length; j++) {
+                        text = transformations[j](text);
+                    }
+                }
+
+                //Call the native function to do the console output
+                native_function(text);
             }
 
-            text = tags_str + text;
-        }
+            function processObject(obj) {
+                if (settings.forceStringifyObjects) {
+                    processText(JSON.stringify(obj));
+                } else {
+                    native_function(obj);
+                }
+            }
 
-        if (settings.useTransformations) {
-            var transformations = get_transformers_for(arguments.callee);
-            for (var j = 0; j < transformations.length; j++) {
-                text = transformations[j](text);
+            if (input instanceof String) {
+                processText(input);
+            } else if (input instanceof Object) {
+                processObject(input);
             }
         }
-
-        //Call the old console.log to do the console output
-        nativeLog(text);
     }
+
+    //Redefine console.log
+    console.log = replace(nativeLog);
+
+    //Redefine console.warn
+    console.warn = replace(nativeWarn);
+
+    //Redefine console.error
+    console.error = replace(nativeError);
 
 }((function () {
     //Determine if we're running in a nodejs instance or in the browser
