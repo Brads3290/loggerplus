@@ -22,7 +22,8 @@
         useTags: false,
         useTextTransformations: false,
         useObjectTransformations: false,
-        forceStringifyObjects: false
+        forceStringifyObjects: false,
+        transformTags: true
     };
 
 
@@ -646,6 +647,14 @@
                 prepend += tags_str;
             }
 
+            var text_transformers;
+            if (settings.transformTags) {
+                text_transformers = get_text_transformers_for(arguments.callee);
+                for (var l = 0; l < text_transformers.length; l++) {
+                    prepend = text_transformers[l](prepend);
+                }
+            }
+
             var args = [];
             if (prepend) {
                 args.push(prepend);
@@ -653,7 +662,7 @@
 
             for (var k = 0; k < arguments.length; k++) {
                 if (settings.useTextTransformations && typeof(arguments[k]) === "string") {
-                    var text_transformers = get_text_transformers_for(arguments.callee);
+                    text_transformers = text_transformers || get_text_transformers_for(arguments.callee);
                     for (var ki = 0; ki < text_transformers.length; ki++) {
                         arguments[k] = text_transformers[ki](arguments[k]);
                     }

@@ -35,6 +35,7 @@ Loggerplus stores its settings in `loggerplus.settings`.
 * **\[Boolean\]** (false) `useTags`: _Turns on or off custom tagging._
 * **\[Boolean\]** (false) `useTextTransformations`: _Turns on or off custom transformations for text components of the log._
 * **\[Boolean\]** (false) `useObjectTransformations`: _Turns on or off custom transformations for object components of the log._
+* **\[Boolean\]** (true) `transformTags`: _Apply text transformations to tags as well as logged text._
 
 ### Logging messages
 
