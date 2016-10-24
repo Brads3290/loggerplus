@@ -1,6 +1,6 @@
 {
   "name": "loggerplus",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A simple JavaScript library to add optional functionality directly to console.log, avoiding the need to refactor existing code.",
   "main": "main.js",
   "scripts": {

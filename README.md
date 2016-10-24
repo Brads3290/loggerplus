@@ -7,8 +7,10 @@ A simple JavaScript library to add optional functionality directly to `console.l
 
 * Automatic date/time tagging of log messages, with custom date/time format.
 * Ability to add tags to messages coming from particular functions (including child calls).
-* Extensible with custom transformations run on messages before they are logged.
+* Extensible with custom transformations run on messages and objects before they are logged.
 * Makes changes directly to `console.log`, so no refactoring required for existing code.
+* Supports variations of `console.log` - namely `error` and `warn` for now.
+* Supports multiple arguments to the log functions (see https://developer.mozilla.org/en-US/docs/Web/API/Console/log)
 * Node.js and vanilla JavaScript.
 
 ## Installation
