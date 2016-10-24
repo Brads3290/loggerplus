@@ -640,14 +640,17 @@
                 var matched_tags = get_tags_for(arguments.callee);
                 var tags_str = "";
                 for (var i = 0; i < matched_tags.length; i++) {
-                    tags_str += "[" + matched_tags[i] + "] ";
+                    tags_str += "[" + matched_tags[i] + "]";
                 }
 
                 prepend += tags_str;
             }
 
             var args = [];
-            args.push(prepend);
+            if (prepend) {
+                args.push(prepend);
+            }
+
             for (var k = 0; k < arguments.length; k++) {
                 if (settings.useTextTransformations && arguments[k] instanceof String) {
                     var text_transformers = get_text_transformers_for(arguments.callee);
