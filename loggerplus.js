@@ -17,14 +17,14 @@
      */
     var settings;
     exporter.settings = settings = {
-        dateTimeFormat: "[YYYY-MM-DD, HH:mm:SS.sss]",
-        useDateTime: false,
-        useTags: false,
-        useTextTransformations: false,
-        useObjectTransformations: false,
-        forceStringifyObjects: false,
-        transformTags: true,
-        disableLogging: false
+        dateTimeFormat: "[YYYY-MM-DD, HH:mm:SS.sss]", //The format for outputting date/time tags on logged messages
+        useDateTime: false, //Show date/time tags on logged messages
+        useTags: false, //Show custom tags on logged messages
+        useTextTransformations: false, //Apply custom text transformation functions to logged messages
+        useObjectTransformations: false, //Apply custom object transformation functions to logged messages
+        transformTags: true, //Apply transformation functions to tags as well as logged messages
+        disableLogging: false, //Disable logging (use in production code)
+        useStackTrace: true //Use stacktrace-js to add meta information to logs
     };
 
 
