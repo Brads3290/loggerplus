@@ -22,7 +22,10 @@
     "loggerplus",
     "plus",
     "simple",
-    "small"
+    "small",
+	"enhance",
+	"log enhance",
+	"better log",
   ],
   "author": "Brad Sullivan",
   "license": "ISC",

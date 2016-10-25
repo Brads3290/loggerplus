@@ -39,7 +39,7 @@ Loggerplus stores its settings in `loggerplus.settings`.
 * **\[Boolean\]** (false) `useObjectTransformations`: _Turns on or off custom transformations for object components of the log._
 * **\[Boolean\]** (true) `transformTags`: _Apply text transformations to tags as well as logged text._
 * **\[Boolean\]** (false) `disableLogging`: _Disables console logging (for production code)._
-* **\[Boolean\]** (true) `useMicroTemplates`: _Use [tinytim](https://www.npmjs.com/package/tinytim) and [stacktrace-js](https://www.npmjs.com/package/stacktrace-js) to provide dynamic logging content._
+* **\[Boolean\]** (false) `useMicroTemplates`: _Use [tinytim](https://www.npmjs.com/package/tinytim) and [stacktrace-js](https://www.npmjs.com/package/stacktrace-js) to provide dynamic logging content._
 
 ### Logging messages
 
@@ -133,6 +133,24 @@ Note the '0 padding' in the last line.
 
     loggerplus.tags.clearPersistent(function_name);
     
+#### Micro-templating
+**Must be activated with `useMicroTemplating`.**
+
+Add dynamic content anywhere in a logged string (including in custom tags) by using the following micro-templates:  
+
+* `{{caller}}` - The name of the function who called the log function.
+* `{{filename}}` - The name of the file in which the log function was called.
+* `{{filepath}}` - The path to the file in which the log function was called.
+* `{{linenumber}}` - The line on which the log function was called.
+* `{{colnumber}}` - The column associated with the call to the log function (specifically, the `l` at the start of the `log(...)` function).
+
+For example:
+    
+    function foo() {
+        console.log("Hello from {{caller}}");
+    }
+    foo(); //Will log "Hello from foo"
+
 #### Custom transformations
 **Must be activated with `useObjectTransformations` or `useTextTransformations`**  
 

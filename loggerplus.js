@@ -28,7 +28,7 @@
         useObjectTransformations: false, //Apply custom object transformation functions to logged messages
         transformTags: true, //Apply transformation functions to tags as well as logged messages
         disableLogging: false, //Disable logging (use in production code)
-        useMicroTemplates: true //Use tinytim to add dynamic information to logs. Most of the information retrieved is using stacktrace-js
+        useMicroTemplates: false //Use tinytim to add dynamic information to logs. Most of the information retrieved is using stacktrace-js
     };
 
 
