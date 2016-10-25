@@ -11,7 +11,8 @@ A simple JavaScript library to add optional functionality directly to `console.l
 * Makes changes directly to `console.log`, so no refactoring required for existing code.
 * Supports variations of `console.log` - namely `error` and `warn` for now.
 * Works with multiple arguments to the log functions (used in the same way as vanilla `console.log` - [see here](https://developer.mozilla.org/en-US/docs/Web/API/Console/log))
-* Node.js and vanilla JavaScript.
+* Automatically retrieve meta information (such as line-number, calling function, etc.) with micro-templates.
+* Built for both Node.js and vanilla JavaScript.
 
 ## Installation
 
