@@ -1,7 +1,7 @@
 (function (exporter) {
     //Dependencies
     var StackTrace = require("stacktrace-js");
-    var tim = require("tinytim");
+    var tim = require("tinytim").tim;
 
     /** Function.getUID
      * Allow each function to hold its own UID.
@@ -643,6 +643,9 @@
                 return;
             }
 
+            //Create an 'args' variable to persist the console.log arguments through nested functions
+            var args = arguments;
+
             //Store all the data to be prepended to the message; namely tags
             var prepend = "";
 
@@ -680,10 +683,10 @@
                     }
                 }
 
-                //Create an 'args' variable to store the processed arguments.\
-                var args = [];
+                //If the prepend has anything in it
                 if (prepend) {
-                    args.push(prepend);
+                    //Prepend it.
+                    args.splice(0, 0, prepend);
                 }
 
                 //Iterate through all the arguments
@@ -724,20 +727,20 @@
                 var templateList = {};
                 StackTrace.get().then(function (stacktrace) {
                     //Populate the template list
-                    var filepath = stacktrace[1]["fileName"];
+                    var filepath = stacktrace[1]["fileName"].split("\\");
                     templateList.caller = stacktrace[1]["functionName"];
-                    templateList.filename = filepath.split("\\\\")[filepath.length - 1];
-                    templateList.filepath = filepath;
+                    templateList.filename = filepath[filepath.length - 1];
+                    templateList.filepath = filepath.join("\\");
                     templateList.linenumber = stacktrace[1]["lineNumber"];
-                    templateList.columnNumber = stacktrace[1]["lineNumber"];
+                    templateList.colnumber = stacktrace[1]["columnNumber"];
 
                     //Resolve microtemplates in tags
                     prepend = tim(prepend, templateList);
 
                     //Resolve microtemplates in messages
-                    for (var i = 0; i < arguments.length; i++) {
-                        if (typeof arguments[i] === "string") {
-                            arguments[i] = tim(arguments[i], templateList);
+                    for (var i = 0; i < args.length; i++) {
+                        if (typeof args[i] === "string") {
+                            args[i] = tim(args[i], templateList);
                         }
                     }
 
