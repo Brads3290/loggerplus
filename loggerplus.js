@@ -686,7 +686,7 @@
                 //If the prepend has anything in it
                 if (prepend) {
                     //Prepend it.
-                    args.splice(0, 0, prepend);
+                    Array.prototype.splice.call(args, 0, 0, prepend);
                 }
 
                 //Iterate through all the arguments
