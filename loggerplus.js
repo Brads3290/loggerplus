@@ -1,4 +1,8 @@
 (function (exporter) {
+    //Dependencies
+    var StackTrace = require("stacktrace-js");
+    var tim = require("tinytim");
+
     /** Function.getUID
      * Allow each function to hold its own UID.
      * Used for global_tags.
@@ -24,7 +28,7 @@
         useObjectTransformations: false, //Apply custom object transformation functions to logged messages
         transformTags: true, //Apply transformation functions to tags as well as logged messages
         disableLogging: false, //Disable logging (use in production code)
-        useStackTrace: true //Use stacktrace-js to add meta information to logs
+        useMicroTemplates: true //Use tinytim to add dynamic information to logs. Most of the information retrieved is using stacktrace-js
     };
 
 
@@ -633,56 +637,116 @@
     //Get the enhanced replacement function based on a native function
     function replace(native_function) {
         return function () {
+
+            //If logging is disabled, don't log anything
             if (settings.disableLogging) {
                 return;
             }
 
+            //Store all the data to be prepended to the message; namely tags
             var prepend = "";
+
+            //If we're using the date/time tag
             if (settings.useDateTime) {
-                prepend = stringify_date(new Date(), settings.dateTimeFormat);
+                //Initialize 'prepend' with the date/time
+                prepend = stringify_date(new Date(), settings.dateTimeFormat) + " ";
             }
 
+            //If we're using custom tags
             if (settings.useTags) {
+                //Get all the relevant tags for this call
                 var matched_tags = get_tags_for(arguments.callee);
-                var tags_str = "";
+
+                //Iterate through them
                 for (var i = 0; i < matched_tags.length; i++) {
-                    tags_str += "[" + matched_tags[i] + "]";
-                }
-
-                prepend += tags_str;
-            }
-
-            var text_transformers;
-            if (settings.transformTags) {
-                text_transformers = get_text_transformers_for(arguments.callee);
-                for (var l = 0; l < text_transformers.length; l++) {
-                    prepend = text_transformers[l](prepend);
+                    //Add them to the prepend string
+                    prepend += "[" + matched_tags[i] + "]";
                 }
             }
 
-            var args = [];
-            if (prepend) {
-                args.push(prepend);
-            }
+            //Provide a continue function, as we may need to implement asynchronous methods
+            function next() {
+                //Define text_transformers early as it's used in 'transformTags'
+                var text_transformers;
 
-            for (var k = 0; k < arguments.length; k++) {
-                if (settings.useTextTransformations && typeof(arguments[k]) === "string") {
-                    text_transformers = text_transformers || get_text_transformers_for(arguments.callee);
-                    for (var ki = 0; ki < text_transformers.length; ki++) {
-                        arguments[k] = text_transformers[ki](arguments[k]);
-                    }
-                } else if (settings.useObjectTransformations && typeof(arguments[k]) === "object") {
-                    var obj_transformers = get_object_transformers_for(arguments.callee);
-                    for (var kj = 0; kj < obj_transformers.length; kj++) {
-                        arguments[k] = obj_transformers[kj](JSON.parse(JSON.stringify(arguments[k])));
+                //If we are transforming the tags too, do so
+                if (settings.transformTags) {
+                    //Get all relevant transformations
+                    text_transformers = get_text_transformers_for(arguments.callee);
+
+                    //Iterate and apply
+                    for (var l = 0; l < text_transformers.length; l++) {
+                        prepend = text_transformers[l](prepend);
                     }
                 }
 
-                args.push(arguments[k]);
+                //Create an 'args' variable to store the processed arguments.\
+                var args = [];
+                if (prepend) {
+                    args.push(prepend);
+                }
+
+                //Iterate through all the arguments
+                for (var k = 0; k < arguments.length; k++) {
+
+
+                    if (settings.useTextTransformations && typeof(arguments[k]) === "string") { //If we're using text transformations and the argument is a string:
+
+                        //We may need to get_text_transformers, or it may have already been defined for 'transformTags'
+                        text_transformers = text_transformers || get_text_transformers_for(arguments.callee);
+
+                        //Iterate and apply
+                        for (var ki = 0; ki < text_transformers.length; ki++) {
+                            arguments[k] = text_transformers[ki](arguments[k]);
+                        }
+                    } else if (settings.useObjectTransformations && typeof(arguments[k]) === "object") { //If we're using object transformations and the argument is an object:
+
+                        //Object transformers won't have been defined yet
+                        var obj_transformers = get_object_transformers_for(arguments.callee);
+
+                        //Iterate and apply
+                        for (var kj = 0; kj < obj_transformers.length; kj++) {
+                            arguments[k] = obj_transformers[kj](JSON.parse(JSON.stringify(arguments[k])));
+                        }
+                    }
+
+                    //Once the argument has been processed, add it to the list
+                    args.push(arguments[k]);
+                }
+
+                //Call the native function to do the console output
+                native_function.apply(null, args);
             }
 
-            //Call the native function to do the console output
-            native_function.apply(null, args);
+            //Do microtemplate resolution, if applicable
+            if (settings.useMicroTemplates) {
+                //Declare the template list
+                var templateList = {};
+                StackTrace.get().then(function (stacktrace) {
+                    //Populate the template list
+                    var filepath = stacktrace[1]["fileName"];
+                    templateList.caller = stacktrace[1]["functionName"];
+                    templateList.filename = filepath.split("\\\\")[filepath.length - 1];
+                    templateList.filepath = filepath;
+                    templateList.linenumber = stacktrace[1]["lineNumber"];
+                    templateList.columnNumber = stacktrace[1]["lineNumber"];
+
+                    //Resolve microtemplates in tags
+                    prepend = tim(prepend, templateList);
+
+                    //Resolve microtemplates in messages
+                    for (var i = 0; i < arguments.length; i++) {
+                        if (typeof arguments[i] === "string") {
+                            arguments[i] = tim(arguments[i], templateList);
+                        }
+                    }
+
+                    //Proceed
+                    next();
+                });
+            } else {
+                next();
+            }
         }
     }
 

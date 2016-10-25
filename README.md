@@ -10,7 +10,7 @@ A simple JavaScript library to add optional functionality directly to `console.l
 * Extensible with custom transformations run on messages and objects before they are logged.
 * Makes changes directly to `console.log`, so no refactoring required for existing code.
 * Supports variations of `console.log` - namely `error` and `warn` for now.
-* Supports multiple arguments to the log functions (see https://developer.mozilla.org/en-US/docs/Web/API/Console/log)
+* Works with multiple arguments to the log functions (used in the same way as vanilla `console.log` - [see here](https://developer.mozilla.org/en-US/docs/Web/API/Console/log))
 * Node.js and vanilla JavaScript.
 
 ## Installation
@@ -39,6 +39,7 @@ Loggerplus stores its settings in `loggerplus.settings`.
 * **\[Boolean\]** (false) `useObjectTransformations`: _Turns on or off custom transformations for object components of the log._
 * **\[Boolean\]** (true) `transformTags`: _Apply text transformations to tags as well as logged text._
 * **\[Boolean\]** (false) `disableLogging`: _Disables console logging (for production code)._
+* **\[Boolean\]** (true) `useMicroTemplates`: _Use [tinytim](https://www.npmjs.com/package/tinytim) and [stacktrace-js](https://www.npmjs.com/package/stacktrace-js) to provide dynamic logging content._
 
 ### Logging messages
 
