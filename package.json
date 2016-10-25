@@ -29,5 +29,8 @@
   "bugs": {
     "url": "https://github.com/Brads3290/loggerplus/issues"
   },
-  "homepage": "https://github.com/Brads3290/loggerplus#readme"
+  "homepage": "https://github.com/Brads3290/loggerplus#readme",
+  "dependencies": {
+    "stacktrace-js": "^1.3.1"
+  }
 }
