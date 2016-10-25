@@ -23,7 +23,8 @@
         useTextTransformations: false,
         useObjectTransformations: false,
         forceStringifyObjects: false,
-        transformTags: true
+        transformTags: true,
+        disableLogging: false
     };
 
 
@@ -632,6 +633,10 @@
     //Get the enhanced replacement function based on a native function
     function replace(native_function) {
         return function () {
+            if (settings.disableLogging) {
+                return;
+            }
+
             var prepend = "";
             if (settings.useDateTime) {
                 prepend = stringify_date(new Date(), settings.dateTimeFormat);
